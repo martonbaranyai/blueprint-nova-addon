@@ -6,6 +6,7 @@ use Blueprint\Blueprint;
 use Blueprint\Contracts\Generator;
 use Blueprint\Models\Model;
 use Blueprint\Tree;
+use Illuminate\Contracts\Filesystem\FileNotFoundException;
 use Illuminate\Pipeline\Pipeline;
 use Illuminate\Support\Str;
 use Naoray\BlueprintNovaAddon\Contracts\Task;
@@ -35,7 +36,11 @@ class NovaGenerator implements Generator
     {
         $output = [];
 
-        $stub = $this->files->get($this->stubPath().DIRECTORY_SEPARATOR.'class.stub');
+        try {
+            $stub = $this->files->stub('class.stub');
+        } catch (FileNotFoundException $e) {
+            $stub = $this->files->get($this->stubPath() . DIRECTORY_SEPARATOR . 'class.stub');
+        }
 
         /** @var \Blueprint\Models\Model $model */
         foreach ($tree->models() as $model) {
