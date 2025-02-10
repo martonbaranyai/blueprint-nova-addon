@@ -31,6 +31,10 @@ class AddRegularFields implements Task
                 $field .= PHP_EOL.self::INDENT_PLUS.'->json()';
             }
 
+            if (in_array('filterable', $column->modifiers())) {
+                $field .= PHP_EOL.self::INDENT_PLUS.'->filterable()';
+            }
+
             $fields .= self::INDENT.$field.','.PHP_EOL.PHP_EOL;
         }
 

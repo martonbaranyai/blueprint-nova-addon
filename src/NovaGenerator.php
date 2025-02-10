@@ -80,9 +80,16 @@ class NovaGenerator implements Generator
             ->through($this->filteredTasks())
             ->thenReturn();
 
+        $searchableColumns = collect($model->columns())->filter(function ($column) {
+            return in_array('searchable', $column->modifiers());
+        })->map->name()->implode("', '");
+
         $stub = str_replace('DummyNamespace', $resourceNamespace, $stub);
         $stub = str_replace('DummyClass', $model->name(), $stub);
         $stub = str_replace('DummyModel', '\\'.$model->fullyQualifiedClassName(), $stub);
+        if ( $searchableColumns ) {
+            $stub = str_replace("search = ['id'];", "search = ['id', '$searchableColumns'];", $stub);
+        }
         $stub = str_replace('// fields...', $data['fields'], $stub);
         $stub = str_replace('use Illuminate\Http\Request;', implode(PHP_EOL, $data['imports']), $stub);
 
