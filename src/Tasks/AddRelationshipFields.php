@@ -45,10 +45,10 @@ class AddRelationshipFields implements Task
                     $label .= 'able';
                 }
 
-                $fields .= self::INDENT.$fieldType."::make('".$label."'";
+                $fields .= self::INDENT.$fieldType."::make(__('".$label."'), '".$methodName."'";
 
-                if ($fieldType !== 'MorphTo' && $this->classNameNotGuessable($label, $class)) {
-                    $fields .= ", '".$methodName."', ".$class.'::class';
+                if ($fieldType !== 'MorphTo') {
+                    $fields .= ", ".$class.'::class';
                 }
 
                 $fields .= ')';
@@ -80,12 +80,6 @@ class AddRelationshipFields implements Task
         return in_array(strtolower($type), $pluralRelations)
             ? Str::plural($name)
             : $name;
-    }
-
-    private function classNameNotGuessable($label, $class): bool
-    {
-        return $label !== $class
-            && $label !== Str::plural($class);
     }
 
     private function isNullable($relation, Model $model): bool
